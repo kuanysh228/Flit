@@ -35,6 +35,14 @@ impl Reader for MdReader {
 
 fn strip_markdown(line: &str) -> String {
     let line = line.trim_start_matches('#').trim();
-    let line = line.trim_start_matches(|c| c == '*' || c == '-' || c == '>');
+    let line = line.trim_start_matches(|c: char| c == '-' || c == '>' || c == ' ');
+    let line = strip_inline(line);
     line.trim().to_string()
+}
+
+fn strip_inline(s: &str) -> String {
+    let s = s.replace("**", "").replace("__", "");
+    let s = s.replace('*', "").replace('_', "");
+    let s = s.replace('`', "");
+    s.replace("~~", "")
 }
