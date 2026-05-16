@@ -9,14 +9,19 @@ pub fn tokenize(paragraphs: impl Iterator<Item = String>) -> Vec<Word> {
     let mut byte_offset: u64 = 0;
 
     for para in paragraphs {
-        for token in para.unicode_words() {
+        for raw in para.split_whitespace() {
+            let token = raw.trim_matches(|c: char| c == '"' || c == '\'' || c == '(' || c == ')' || c == '[' || c == ']');
             if token.is_empty() {
                 continue;
             }
-            let orp_idx = find_orp(token);
-            let pause = detect_pause(token);
+            let display = strip_leading_punct(token);
+            if display.is_empty() {
+                continue;
+            }
+            let orp_idx = find_orp(display);
+            let pause = detect_pause(display);
             words.push(Word {
-                text: token.to_string(),
+                text: display.to_string(),
                 orp_idx,
                 pause,
                 position: WordPosition { index, byte_offset },
@@ -28,6 +33,10 @@ pub fn tokenize(paragraphs: impl Iterator<Item = String>) -> Vec<Word> {
     }
 
     words
+}
+
+fn strip_leading_punct(s: &str) -> &str {
+    s.trim_start_matches(|c: char| !c.is_alphanumeric())
 }
 
 fn detect_pause(word: &str) -> Pause {
