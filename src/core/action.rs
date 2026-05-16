@@ -1,0 +1,22 @@
+#[derive(Debug, Clone, PartialEq)]
+pub enum Action {
+    TogglePause,
+    ChangeSpeed(f32),
+    SetWpm(u16),
+    SeekWords(i64),
+    SeekSentence(i64),
+    SeekParagraph(i64),
+    GotoStart,
+    GotoEnd,
+    GotoPercent(u8),
+    SetMark(char),
+    JumpMark(char),
+    SearchNext,
+    SearchPrev,
+    EnterCommandMode,
+    EnterSearchMode,
+    ShowHelp,
+    ShowStats,
+    Quit,
+    QuitNoSave,
+}
